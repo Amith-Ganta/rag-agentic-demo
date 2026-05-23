@@ -3,6 +3,14 @@ Comprehensive RAG + Agentic Architectures - Streamlit Demo App
 Showcases all patterns from the tutorial notebook
 """
 
+# Fix SSL issues caused by antivirus/corporate proxies (Avast, etc.)
+# Uses Windows system certificate store instead of Python's certifi bundle
+try:
+    import truststore
+    truststore.inject_into_ssl()
+except ImportError:
+    pass  # truststore not installed - skip (will work on Streamlit Cloud)
+
 import streamlit as st
 import os
 from typing import List, TypedDict, Literal
