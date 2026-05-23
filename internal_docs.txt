@@ -1,0 +1,106 @@
+
+Title: Transformer Variants for Production
+
+We have used the following transformer variants in production deployments:
+
+1. EfficientFormer:
+   - Optimized for mobile inference.
+   - Deployed in multiple mobile and edge environments.
+   - Quantized using ONNX and optimized via TensorRT.
+   - Benchmarked with 1.2ms inference time on A72 CPUs.
+
+2. Longformer:
+   - Applied to long-context document summarization and legal document review.
+   - Token window increased to 8192 with sliding window attention.
+   - Used with chunk-based summarization pipeline.
+   - Attention weights visualized using in-house tools for explainability.
+
+3. Reformer:
+   - Tested for memory efficiency on embedded devices.
+   - LSH attention led to 60% memory reduction.
+   - Integration challenges with standard transformers due to bucket collisions.
+   - Ongoing investigation for training stability and gradient clipping strategies.
+
+4. LLaMA2:
+   - Integrated with proprietary instruction-tuned layer.
+   - Combined with domain-specific knowledge graphs.
+   - Used as base model in chat deployment.
+   - Prompt format adapted with multi-turn chat memory and RAG backend.
+   - Experimented with LLamaIndex and LangGraph-based orchestration
+
+5. TinyBERT:
+   - Fine-tuned for classification tasks on internal email triage system.
+   - Integrated into Outlook plugin via TensorFlow Lite.
+
+Deployment Architecture:
+
+- Core stack: FastAPI + TorchServe, optionally with Ray Serve
+- Autoscaling based on queue length using Kubernetes + KEDA
+- Model sharding: DeepSpeed stage 3 and HuggingFace Accelerate
+- Monitoring: Prometheus + Grafana dashboards
+- Alerting: Latency thresholds, memory usage spikes
+
+Optimizations:
+
+- Distillation of teacher-student models using response alignment
+- Knowledge injection via adapters
+- Mixed-precision training (AMP) with Nvidia A100s
+- Use of DVC and MLflow for experiment tracking
+- Canary rollout strategy for model updates
+- CI/CD: GitHub Actions -> Docker -> EKS with Helm charts
+
+Additional Notes:
+
+- Vision transformers (ViT and Swin Transformer) evaluated in manufacturing QC tasks.
+- Speech transformers (Wav2Vec 2.0) benchmarked for voice assistant integrations.
+- Tokenizers: SentencePiece, BPE, and unigram tokenizers compared for multilingual tasks.
+- Significant improvements noted with FlashAttention and Rotary Positional Encoding.
+
+TinyBERT:
+- Used for classification: Support ticket priority tagging
+- Evaluation: 87% F1 score, confusion in ambiguous class C
+- Works well with 2-layer FFN adapter for domain transfer
+
+Additional Experiments:
+
+1. FlashAttention2:
+   - Integrated into LLaMA2
+   - Reduces context latency by ~50%
+
+2. Chain-of-Thought prompting:
+   - Outperforms direct answer prompting by 8% on logic tasks
+   - Reflective prompting increases accuracy by 3%
+
+3. Tool-augmented prompting:
+   - Integrated LangGraph + Wikipedia + SQL search
+   - Enables dynamic retrieval-agent reasoning
+   - Example: "Give me customer insights from SQL, verify with wiki"
+
+4. Human evaluation protocol:
+   - Internal annotators score fluency, helpfulness, correctness
+   - GPT-4 also used as synthetic evaluator
+
+5. Retrieval experiments:
+   - Hybrid dense + sparse retriever
+   - Tested Weaviate vs FAISS + BM25 reranking
+   - FAISS more efficient but slightly lower recall
+   - Weaviate integration with GraphQL helpful for filtering
+
+6. LoRA tuning:
+   - Used for adapter-based fine-tuning
+   - Rank = 8, dropout = 0.05
+   - Reduces GPU memory footprint by 60%
+   - Compatible with PEFT library
+
+7. Safety:
+   - Toxicity detection via Detoxify
+   - Out-of-scope filter via zero-shot classifier
+   - Red teaming involved adversarial prompt testing
+
+Conclusion:
+
+- LLaMA2 continues to be promising for controlled chat
+- Sparse attention models are being prioritized for research
+- Dynamic RAG pipelines via LangGraph outperform static RAG
+
+

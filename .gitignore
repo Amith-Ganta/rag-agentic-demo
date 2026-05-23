@@ -1,0 +1,57 @@
+# SECRETS - NEVER COMMIT THESE
+.env
+.env.*
+.streamlit/secrets.toml
+*.key
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Virtual environments
+venv/
+env/
+.venv/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Streamlit
+.streamlit/cache/
+
+# Vector stores (regenerated on deploy)
+*.faiss
+*.pkl
+faiss_index/
+
+# Logs
+*.log
+logs/
+
+# Build artifacts
+build/
+dist/
+*.egg
+
+# Sentence-transformers cache
+.cache/
