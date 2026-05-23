@@ -527,7 +527,7 @@ def run_agent_demo(agent_type: str, question: str):
     with st.spinner(f"Running {agent_type}..."):
         try:
             agent = create_agent(
-                llm=llm,
+                model=llm,
                 tools=[rag_tool],
                 system_prompt=prompt_text
             )
