@@ -5,9 +5,15 @@ Showcases all patterns from the tutorial notebook
 
 import streamlit as st
 import os
-from dotenv import load_dotenv
 from typing import List, TypedDict, Literal
 from pydantic import BaseModel, Field
+
+# Optional dotenv import (only needed for local dev)
+try:
+    from dotenv import load_dotenv
+    DOTENV_AVAILABLE = True
+except ImportError:
+    DOTENV_AVAILABLE = False
 
 # Load environment - supports both local .env and Streamlit Cloud secrets
 def load_api_keys():
@@ -17,9 +23,10 @@ def load_api_keys():
         os.environ["GROQ_API_KEY"] = st.secrets["GROQ_API_KEY"]
         os.environ["TAVILY_API_KEY"] = st.secrets.get("TAVILY_API_KEY", "")
         return "cloud"
-    except (FileNotFoundError, KeyError, Exception):
-        # Fall back to local .env file
-        load_dotenv()
+    except Exception:
+        # Fall back to local .env file (only if dotenv is installed)
+        if DOTENV_AVAILABLE:
+            load_dotenv()
         groq_key = os.getenv("GROQ_API_KEY")
         tavily_key = os.getenv("TAVILY_API_KEY", "")
         if groq_key:
